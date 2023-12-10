@@ -12,6 +12,7 @@ public class advPlayerMove : MonoBehaviour
     [Header("Other")]
     //Other
     private Rigidbody rb;
+    private GunController gunController;
 
     [Header("Rotation&Look")]
     //Rotation and look
@@ -54,7 +55,7 @@ public class advPlayerMove : MonoBehaviour
     [Header("Input")]
     //Input
     float x, y;
-    bool jumping, sprinting, crouching, dashing;
+    bool jumping, sprinting, crouching, dashing, shooting;
 
     [Header("Sliding")]
     //Sliding
@@ -64,6 +65,7 @@ public class advPlayerMove : MonoBehaviour
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
+        gunController = GetComponent<GunController>();
     }
 
     void Start()
@@ -90,6 +92,7 @@ public class advPlayerMove : MonoBehaviour
     /// </summary>
     private void MyInput()
     {
+        //Movement
         x = Input.GetAxisRaw("Horizontal");
         y = Input.GetAxisRaw("Vertical");
         jumping = Input.GetButton("Jump");
@@ -101,6 +104,15 @@ public class advPlayerMove : MonoBehaviour
             StartCrouch();
         if (Input.GetKeyUp(KeyCode.LeftControl))
             StopCrouch();
+        
+        //Guns
+        if (Input.GetMouseButton(0))
+            gunController.OnTriggerHold();
+        if (Input.GetMouseButtonUp(0))
+            gunController.OnTriggerRelease();
+        if (Input.GetKeyDown(KeyCode.R))
+            gunController.Reload();
+
     }
 
     private void StartCrouch()
