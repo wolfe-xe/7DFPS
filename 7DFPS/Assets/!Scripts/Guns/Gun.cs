@@ -119,7 +119,7 @@ public class Gun : MonoBehaviour
         float percent = 0;
         float reloadSpeed = 1f / reloadTime;
         Vector3 initialRot = transform.eulerAngles;
-        float maxReloadAngle = 30;
+        //float maxReloadAngle = 30;
 
         while (percent < 1)
         {
