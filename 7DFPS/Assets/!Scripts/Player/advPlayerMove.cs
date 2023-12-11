@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class advPlayerMove : MonoBehaviour
@@ -28,21 +29,21 @@ public class advPlayerMove : MonoBehaviour
     public LayerMask whatIsGround;
 
     public float counterMovement = 0.175f;
-    private float threshold = 0.01f;
     public float maxSlopeAngle = 35f;
+    private float threshold = 0.01f;
 
-    [Header("Croush&Slide")]
+    [Header("Croush Slide")]
     //Crouch & Slide
-    private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
-    private Vector3 playerScale;
     public float slideForce = 800;
     public float slideCounterMovement = 0.2f;
+    private Vector3 crouchScale = new Vector3(1, 0.5f, 1);
+    private Vector3 playerScale;
 
     [Header("Jumping")]
     //Jumping
+    public float jumpForce = 550f;
     private bool readyToJump = true;
     private float jumpCooldown = 0.25f;
-    public float jumpForce = 550f;
 
     [Header("Dash")]
     //Dash
@@ -61,6 +62,17 @@ public class advPlayerMove : MonoBehaviour
     //Sliding
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
+
+    [Header("Sway")]
+    //Sway
+    public float step = 0.01f; //its multiplied to the value of the mouse for 1 frame;
+    public float maxStepDistance = 0.06f; //max distance from the local origin;
+    public float rotationStep = 4f; 
+    public float maxRotationStep = 5f;
+    public float smooth = 10f; //offset
+    public float smoothRot = 12f;
+    Vector3 swayPos;
+    Vector3 swayEulerRot;
 
     void Awake()
     {
@@ -87,11 +99,17 @@ public class advPlayerMove : MonoBehaviour
         Look();
     }
 
+    public Vector2 walkInput; // stores input from key
+    public Vector2 lookInput; // stores input from mouse
+
     /// <summary>
     /// Find user input. Should put this in its own class but im lazy
     /// </summary>
-    private void MyInput()
+    public void MyInput()
     {
+        x = walkInput.x;
+        y = walkInput.y;
+
         //Movement
         x = Input.GetAxisRaw("Horizontal");
         y = Input.GetAxisRaw("Vertical");
@@ -261,8 +279,60 @@ public class advPlayerMove : MonoBehaviour
         readyToDash = true;
     }
 
+    private void Sway()
+    {
+        //x,y,z pos change as a result of moving mouse;
+        Vector3 invertLook = lookInput * -step;
+        invertLook.x = Mathf.Clamp(invertLook.x, -maxStepDistance, maxStepDistance);
+        invertLook.y = Mathf.Clamp(invertLook.y, -maxStepDistance, maxStepDistance);
+
+        swayPos = invertLook;
+    }
+
+    private void SwayRotation()
+    {
+        Vector3 invertLook = lookInput * -rotationStep;
+        invertLook.x = Mathf.Clamp(invertLook.x, -maxRotationStep, maxRotationStep);
+        invertLook.y = Mathf.Clamp(invertLook.y, -maxRotationStep, maxRotationStep);
+
+        swayEulerRot = new Vector3(invertLook.y, invertLook.x, invertLook.x);
+    }
+
+    private void CompositePositionRotation()
+    {
+        //pos
+        transform.localPosition = Vector3.Lerp(transform.localPosition, swayPos, Time.deltaTime * smooth);
+        //rot
+        transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(swayEulerRot), Time.deltaTime * smoothRot);
+    }
+
     private float desiredX;
+
     private void Look()
+    {
+        float mouseX;
+        float mouseY;
+        mouseX = lookInput.x;
+        mouseY = lookInput.y;
+
+        mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
+        mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
+
+        //Find current look rotation
+        Vector3 rot = playerCam.transform.localRotation.eulerAngles;
+        desiredX = rot.y + mouseX;
+
+        //Rotate, and also make sure we dont over- or under-rotate.
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        //Perform the rotations
+        playerCam.transform.localRotation = Quaternion.Euler(xRotation, desiredX, 0);
+        orientation.transform.localRotation = Quaternion.Euler(0, desiredX, 0);
+    }
+
+    //BackUp Look in case something goes wrong. Base Ver.
+   /* private void LookAdv()
     {
         float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
         float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime * sensMultiplier;
@@ -278,7 +348,7 @@ public class advPlayerMove : MonoBehaviour
         //Perform the rotations
         playerCam.transform.localRotation = Quaternion.Euler(xRotation, desiredX, 0);
         orientation.transform.localRotation = Quaternion.Euler(0, desiredX, 0);
-    }
+    }*/
 
     private void CounterMovement(float x, float y, Vector2 mag)
     {

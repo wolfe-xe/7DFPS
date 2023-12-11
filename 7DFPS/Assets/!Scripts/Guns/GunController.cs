@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class GunController : MonoBehaviour
 {
+
+    [Header("Assingables")]
+    //Assingables
     public Transform weaponHolder;
+
+    [Header("Guns")]
+    //Guns
     //public Gun[] allGun;
     public Gun startingGun;
     Gun equippedGun;
@@ -44,13 +50,13 @@ public class GunController : MonoBehaviour
         }
     }
 
-/*    public void Aim(Vector3 aimPoint)
+    public void Aim(Vector3 aimPoint)
     {
         if (equippedGun != null)
         {
             equippedGun.Aim(aimPoint);
         }
-    }*/
+    }
 
     public void Reload()
     {
