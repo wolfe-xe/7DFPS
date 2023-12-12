@@ -17,6 +17,7 @@ public class SwayAndBob : MonoBehaviour
     public float maxRotationStep = 5f;
     public float smooth = 10f; //offset
     public float smoothRot = 12f;
+    bool sway = true;
     Vector3 swayPos;
     Vector3 swayEulerRot;
 
@@ -28,6 +29,7 @@ public class SwayAndBob : MonoBehaviour
     public Vector3 multiplier;
     float curveSin { get => Mathf.Sin(speedCurve); }
     float curveCos { get => Mathf.Cos(speedCurve); }
+    bool bob = true;
     Vector3 bobPos;
     Vector3 bobEulerRotation;
 
@@ -43,8 +45,13 @@ public class SwayAndBob : MonoBehaviour
 
     private void Sway()
     {
+        if (sway == false)
+        {
+            swayPos = Vector3.zero;
+            return;
+        }
         //x,y,z pos change as a result of moving mouse;
-        
+
         Vector3 invertLook = advMove.lookInput * -step;
         invertLook.x = Mathf.Clamp(invertLook.x, -maxStepDistance, maxStepDistance);
         invertLook.y = Mathf.Clamp(invertLook.y, -maxStepDistance, maxStepDistance);
@@ -54,6 +61,12 @@ public class SwayAndBob : MonoBehaviour
 
     private void SwayRotation()
     {
+        if (sway == false)
+        {
+            swayPos = Vector3.zero;
+            return;
+        }
+
         Vector3 invertLook = advMove.lookInput * -rotationStep;
         invertLook.x = Mathf.Clamp(invertLook.x, -maxRotationStep, maxRotationStep);
         invertLook.y = Mathf.Clamp(invertLook.y, -maxRotationStep, maxRotationStep);
@@ -65,6 +78,12 @@ public class SwayAndBob : MonoBehaviour
     private void BobOffset()
     {
         speedCurve += Time.deltaTime * (advMove.grounded ? rb.velocity.magnitude : 1f) + 0.01f;
+
+        if (bob == false)
+        {
+            bobPos = Vector3.zero;
+            return;
+        }
 
         bobPos.x = (curveCos * BobLimit.x * (advMove.grounded ? 1 : 0)) - (advMove.walkInput.x * travelLimit.x);
         bobPos.y = (curveCos * BobLimit.y * (advMove.grounded ? 1 : 0)) - (advMove.walkInput.y * travelLimit.y);
