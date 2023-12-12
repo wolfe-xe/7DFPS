@@ -28,6 +28,7 @@ public class Gun : MonoBehaviour
     int projectilesRemainingInMag;
     float nextShot;
     float recoilXAxis;
+    float recoilYAxis;
     float recoilXAcisSmoothDampVel;
     bool triggerReleased;
     bool isReloading;
@@ -53,7 +54,7 @@ public class Gun : MonoBehaviour
         }
     }
 
-    void Shoot()
+    public void Shoot()
     {
         if (!isReloading && Time.time > nextShot && projectilesRemainingInMag > 0)
         {
@@ -91,9 +92,12 @@ public class Gun : MonoBehaviour
             //Instantiate(shell, shellEject.position, shellEject.rotation);
 
             //muzzleFlash.Activate();
-            transform.localPosition -= Vector3.forward * 0.005f;
-            recoilXAxis += .5f;
+            transform.localPosition -= Vector3.forward * 0.1f;
+            transform.localPosition += Vector3.up * 0.02f;
+            recoilXAxis += 2f;
+            recoilYAxis += 4f;
             recoilXAxis = Mathf.Clamp(recoilXAxis, 0, 0.5f);
+            recoilXAxis = Mathf.Clamp(recoilYAxis, 1, 2);
 
             //AudioManager.instance.PlaySound(shootAudio, transform.position);
 
