@@ -50,7 +50,10 @@ public class advPlayerMove : MonoBehaviour
     public float dashSpeed;
     public float dashForce = 550;
     public float dashDuration = 2f;
+    public float arialDashSpeed = 2f;
+    public float airalDashForce = 100;
     public float dashCooldown = 0.25f;
+    public float dashCounterMovement = 1.2f;
     private bool readyToDash = true;
 
     [Header("Input")]
@@ -62,17 +65,6 @@ public class advPlayerMove : MonoBehaviour
     //Sliding
     private Vector3 normalVector = Vector3.up;
     private Vector3 wallNormalVector;
-
-    [Header("Sway")]
-    //Sway
-    public float step = 0.01f; //its multiplied to the value of the mouse for 1 frame;
-    public float maxStepDistance = 0.06f; //max distance from the local origin;
-    public float rotationStep = 4f; 
-    public float maxRotationStep = 5f;
-    public float smooth = 10f; //offset
-    public float smoothRot = 12f;
-    Vector3 swayPos;
-    Vector3 swayEulerRot;
 
     void Awake()
     {
@@ -102,9 +94,6 @@ public class advPlayerMove : MonoBehaviour
     public Vector2 walkInput; // stores input from key
     public Vector2 lookInput; // stores input from mouse
 
-    /// <summary>
-    /// Find user input. Should put this in its own class but im lazy
-    /// </summary>
     public void MyInput()
     {
         x = walkInput.x;
@@ -232,7 +221,7 @@ public class advPlayerMove : MonoBehaviour
 
     private void Dash()
     {
-        if (grounded && readyToDash && !crouching)
+        if (readyToDash && !crouching)
         {
             readyToDash = false;
 
@@ -240,7 +229,7 @@ public class advPlayerMove : MonoBehaviour
 
             //rb.AddForce(forceToApply, ForceMode.Impulse);
             //rb.AddForce(orientation.forward * dashForce * 1.5f);
-            if (dashing)
+            if (dashing && grounded)
             {
                 dashSpeed = 20f * 100f;         
                 if (x != 0)
@@ -264,11 +253,37 @@ public class advPlayerMove : MonoBehaviour
                     else
                     {
                         rb.AddForce(-orientation.forward * dashForce, ForceMode.Impulse);
-
-
                     }
                 }
             }
+
+/*            if (dashing && !grounded)
+            {
+                dashSpeed = 10f;
+                if (x != 0)
+                {
+                    if (x > 0)
+                    {
+                        rb.AddForce(orientation.right * dashForce, ForceMode.Impulse);
+                    }
+                    else
+                    {
+                        rb.AddForce(-orientation.right * dashForce, ForceMode.Impulse);
+                    }
+                }
+
+                if (y != 0)
+                {
+                    if (y > 0)
+                    {
+                        rb.AddForce(orientation.forward * dashForce, ForceMode.Impulse);
+                    }
+                    else
+                    {
+                        rb.AddForce(-orientation.forward * dashForce, ForceMode.Impulse);
+                    }
+                }
+            }*/
 
             Invoke(nameof(ResetDash), dashDuration);
         }
@@ -279,32 +294,6 @@ public class advPlayerMove : MonoBehaviour
         readyToDash = true;
     }
 
-    private void Sway()
-    {
-        //x,y,z pos change as a result of moving mouse;
-        Vector3 invertLook = lookInput * -step;
-        invertLook.x = Mathf.Clamp(invertLook.x, -maxStepDistance, maxStepDistance);
-        invertLook.y = Mathf.Clamp(invertLook.y, -maxStepDistance, maxStepDistance);
-
-        swayPos = invertLook;
-    }
-
-    private void SwayRotation()
-    {
-        Vector3 invertLook = lookInput * -rotationStep;
-        invertLook.x = Mathf.Clamp(invertLook.x, -maxRotationStep, maxRotationStep);
-        invertLook.y = Mathf.Clamp(invertLook.y, -maxRotationStep, maxRotationStep);
-
-        swayEulerRot = new Vector3(invertLook.y, invertLook.x, invertLook.x);
-    }
-
-    private void CompositePositionRotation()
-    {
-        //pos
-        transform.localPosition = Vector3.Lerp(transform.localPosition, swayPos, Time.deltaTime * smooth);
-        //rot
-        transform.localRotation = Quaternion.Slerp(transform.localRotation, Quaternion.Euler(swayEulerRot), Time.deltaTime * smoothRot);
-    }
 
     private float desiredX;
 
@@ -360,6 +349,12 @@ public class advPlayerMove : MonoBehaviour
             rb.AddForce(moveSpeed * Time.deltaTime * -rb.velocity.normalized * slideCounterMovement);
             return;
         }
+
+        /*if (!grounded && dashing)
+        {
+            rb.AddForce(-dashSpeed * Time.deltaTime * -rb.velocity.normalized * slideCounterMovement);
+            return;
+        }*/
 
         //Counter movement
         if (Mathf.Abs(mag.x) > threshold && Mathf.Abs(x) < 0.05f || (mag.x < -threshold && x > 0) || (mag.x > threshold && x < 0))
