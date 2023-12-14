@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour
 {
+    public ParticleSystem impactPoint;
     public LayerMask collisonLayerMask;
     //public Color TrailColor;
 
