@@ -725,7 +725,7 @@ GameObject:
   - component: {fileID: 999367753}
   - component: {fileID: 999367758}
   - component: {fileID: 999367759}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -744,7 +744,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 071867848d4e4014cb1535adc3322597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startingHP: 100
+  startingHP: 10
   playerCam: {fileID: 794797520}
   orientation: {fileID: 1932565372}
   moveSpeed: 4500
@@ -1891,7 +1891,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1747987874}
-  - component: {fileID: 1747987875}
   m_Layer: 10
   m_Name: Turret
   m_TagString: Untagged
@@ -1915,31 +1914,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1747987875
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1747987873}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bb2175cb44005b747a4c11590743da2d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  startingHP: 10
-  fireMode: 0
-  muzzle:
-  - {fileID: 1463987859}
-  bullet: {fileID: -7270850368285041190, guid: 152c1af7d0041cf4c8e9641e8c6cfe1d, type: 3}
-  turretHead: {fileID: 2101844222}
-  fireRate: 100
-  muzzleVelocity: 35
-  burstCount: 20
-  deathFX: {fileID: 5909873704372587662, guid: 8b0169ec15895fb4f9f64e5d64a21a1c, type: 3}
-  turretRadius: 20
-  hasTarget: 0
-  inRange: 0
 --- !u!1 &1775118859
 GameObject:
   m_ObjectHideFlags: 0
@@ -2005,7 +1979,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1786372350}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: headCam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2133,7 +2107,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1932565372}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Orientation
   m_TagString: Untagged
   m_Icon: {fileID: 0}
