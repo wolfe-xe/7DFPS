@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class advPlayerMove : MonoBehaviour
+public class advPlayerMove : Entity
 {
     [Header("Assignables")]
     //Assingables
@@ -61,6 +61,10 @@ public class advPlayerMove : MonoBehaviour
     float x, y;
     bool jumping, sprinting, crouching, dashing, shooting;
 
+    public static event System.Action OnDeathStatic;
+    public ParticleSystem deathFX;
+    int damage = 1;
+
     [Header("Sliding")]
     //Sliding
     private Vector3 normalVector = Vector3.up;
@@ -72,11 +76,14 @@ public class advPlayerMove : MonoBehaviour
         gunController = GetComponent<GunController>();
     }
 
-    void Start()
+    protected override void Start()
     {
+        base.Start();
+        health = startingHP;
         playerScale = transform.localScale;
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+        
     }
 
 
@@ -120,6 +127,9 @@ public class advPlayerMove : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.R))
             gunController.Reload();
 
+        //Shot
+        if (Input.GetKeyUp(KeyCode.Q))
+            TakeDamage(damage);
     }
 
     private void StartCrouch()
@@ -438,5 +448,14 @@ public class advPlayerMove : MonoBehaviour
     private void StopGrounded()
     {
         grounded = false;
+    }
+
+    public override void Die()
+    {
+
+        //AudioManager.instance.PlaySound("Player Death", transform.position);
+        base.Die();
+        GameObject.Destroy(gunController);
+
     }
 }

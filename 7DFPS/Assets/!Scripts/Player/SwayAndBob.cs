@@ -35,12 +35,16 @@ public class SwayAndBob : MonoBehaviour
 
     void Update()
     {
-        advMove.MyInput();
-        Sway();
-        SwayRotation();
-        BobOffset();
-        BobRotation();
-        CompositePositionRotation();
+        if(advMove != null)
+        {
+            advMove.MyInput();
+            Sway();
+            SwayRotation();
+            BobOffset();
+            BobRotation();
+            CompositePositionRotation();
+        }
+
     }
 
     private void Sway()

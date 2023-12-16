@@ -5,17 +5,15 @@ using UnityEngine.AI;
 using static UnityEngine.EventSystems.EventTrigger;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class Enemies : MonoBehaviour
+public class Enemies : Entity
 {
     //Ref
     NavMeshAgent pathFindingEnemy;
     Transform target;
+    Entity targetEntity;
 
-    //Assignables
-    //public ParticleSystem deathFX;
-
-    float enemyCollisionRadius;
-    float targetCollisionRadius;
+    public static event System.Action OnDeathStatic;
+    public ParticleSystem deathFX;
 
     public enum State { Idle, Chasing, Attacking };
     State currentState;
@@ -31,16 +29,14 @@ public class Enemies : MonoBehaviour
             hasTarget = true;
 
             target = GameObject.FindGameObjectWithTag("Player").transform;
-
-            enemyCollisionRadius = GetComponent<CapsuleCollider>().radius;
-            targetCollisionRadius = target.GetComponent<CapsuleCollider>().radius;
-
+            targetEntity = target.GetComponent<Entity>();
         }
 
     }
 
-    protected void Start()
+    protected override void Start()
     {
+        base.Start();
 
         if (hasTarget)
         {
@@ -51,11 +47,25 @@ public class Enemies : MonoBehaviour
 
     }
 
+    public override void TakeHit(float damage, Vector3 hitPoint, Vector3 hitDirection)
+    {
+        if (damage >= health)
+        {
+            if (OnDeathStatic != null)
+            {
+                OnDeathStatic();
+            }
+            //AudioManager.instance.PlaySound("Enemy Death", transform.position);
+            Destroy(Instantiate(deathFX.gameObject, hitPoint, Quaternion.FromToRotation(Vector3.forward, hitDirection)) as GameObject, deathFX.startLifetime);
+        }
+        base.TakeHit(damage, hitPoint, hitDirection);
+    }
+
     IEnumerator UpdatePath()
     {
         float refreshRate = 0.25f;
 
-        while (hasTarget)
+        while (hasTarget != null)
         {
             if (currentState == State.Chasing)
             {
