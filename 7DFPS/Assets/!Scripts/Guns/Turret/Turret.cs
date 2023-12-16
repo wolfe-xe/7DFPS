@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class Turret : Entity
 {
@@ -18,7 +19,7 @@ public class Turret : Entity
     Entity targetEntity;
     public static event System.Action OnDeathStatic;
     public ParticleSystem deathFX;
-    float damage = 10f;
+    float damage = 1f;
 
     int shotsRemainingInBurst;
 
@@ -61,7 +62,7 @@ public class Turret : Entity
             {
                 inRange = true;
                 turretHead.LookAt(target.localPosition);
-                Shoot();
+                Shoot();           
             }
         }
     }
