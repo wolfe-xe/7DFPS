@@ -113,7 +113,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   collisonLayerMask:
     serializedVersion: 2
-    m_Bits: 1920
+    m_Bits: 1664
   speed: 100
   damage: 1
   lifetime: 5
