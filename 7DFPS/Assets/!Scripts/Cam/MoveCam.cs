@@ -8,6 +8,9 @@ public class MoveCam : MonoBehaviour
 
     private void Update()
     {
-        transform.position = camPos.position;
+        if (camPos != null)
+        {
+            transform.position = camPos.position;
+        }
     }
 }
